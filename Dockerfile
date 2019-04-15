@@ -84,13 +84,13 @@ EXPOSE 8888
 RUN mkdir /notebook
 VOLUME /notebook
 
-RUN conda update --quiet --yes -n base conda && \
+ RUN conda update --quiet --yes -n base conda && \
     conda create -n python36 python=3.6 && \
-    source activate python36 && \
+    # source activate python36 && \
     conda activate python36 && \
     # conda update --quiet --yes conda && \
-    echo "conda activate base" >> ~/.bashrc && \
-    echo "source activate env" >> ~/.bashrc \
+    # echo "conda activate python36" >> ~/.bashrc && \
+    echo "source activate python36" >> ~/.bashrc \
     && python -V
 
 ENV PATH /opt/conda/envs/env/bin:$PATH
