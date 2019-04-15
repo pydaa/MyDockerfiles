@@ -87,6 +87,7 @@ VOLUME /notebook
 RUN conda update --quiet --yes -n base conda && \
     conda create -n python36 python=3.6 && \
     source activate python36 && \
+    conda activate python36 && \
     # conda update --quiet --yes conda && \
     echo "conda activate base" >> ~/.bashrc && \
     echo "source activate env" >> ~/.bashrc
@@ -118,24 +119,33 @@ RUN conda install --quiet --yes -c\
       statsmodels \
       tqdm \
       typing \
-      # mypy \
+      mypy \
  && conda install --quiet --yes -c conda-forge \
-      # pyviz \
-      # xgboost \
+      pyviz \
+      xgboost \
       'opencv==4.0.*'
 
 RUN pip install --upgrade pip && \
     pip install -q \
-      # dowhy \
+      dowhy \
       japanize_matplotlib \
       jupyter-tensorboard \
-      /* jupyterlab-discovery \ */
+      jupyterlab_code_formatter \
+      jupyterlab-git \
       optuna \
       plotly \
       'tensorflow==2.0.0a0'
 
 RUN jupyter labextension install \
-      jupyterlab-flake8
+      @lckr/jupyterlab_variableinspector \
+      @jupyterlab/toc \
+      @ryantam626/jupyterlab_code_formatter \
+      @jupyterlab/git \
+      @jupyter-widgets/jupyterlab-manager \
+ && jupyter nbextension enable --py --sys-prefix widgetsnbextension \
+ && jupyter serverextension enable --py jupyterlab_code_formatter \
+ && jupyter serverextension enable --py jupyterlab_git
+
 
 # RUN conda install --quiet --yes \
 #     'rpy2=2.9*' \
