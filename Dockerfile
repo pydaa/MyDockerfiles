@@ -120,7 +120,6 @@ RUN conda install --quiet --yes -c\
       statsmodels \
       tqdm \
       typing \
-      mypy \
  && conda install --quiet --yes -c conda-forge \
       # pyviz \
       xgboost \
