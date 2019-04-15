@@ -90,7 +90,8 @@ RUN conda update --quiet --yes -n base conda && \
     conda activate python36 && \
     # conda update --quiet --yes conda && \
     echo "conda activate base" >> ~/.bashrc && \
-    echo "source activate env" >> ~/.bashrc
+    echo "source activate env" >> ~/.bashrc \
+    && python -V
 
 ENV PATH /opt/conda/envs/env/bin:$PATH
 
@@ -121,7 +122,7 @@ RUN conda install --quiet --yes -c\
       typing \
       mypy \
  && conda install --quiet --yes -c conda-forge \
-      pyviz \
+      # pyviz \
       xgboost \
       'opencv==4.0.*'
 
