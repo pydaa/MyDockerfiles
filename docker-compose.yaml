@@ -1,7 +1,8 @@
 version:  '3'
 services:
   datascience-notebook:
-    image:    pydaa/python-data-science
+    # image:    pydaa/python-data-science
+    build: data_science
     volumes:
       - ${HOME}:/home
       - ${LOCAL_DATASETS}:/home/data
@@ -9,7 +10,7 @@ services:
       - ${LOCAL_SSL_CERTS}:/etc/ssl/notebook
     ports:
       - ${PORT}:8888
-    container_name: python-data-science
+    # container_name: python-data-science
     command: "jupyter lab"
       # --NotebookApp.password=${ACCESS_TOKEN}"
     links:
