@@ -1,0 +1,52 @@
+name: python36
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.6.*
+  - black
+  - bokeh
+  - cudatoolkit=10.0.*
+  - cudnn
+  - ipykernel
+  - jupyterlab
+  - jupyterlab-git
+  - lightgbm
+  - matplotlib
+  - mypy
+  - networkx
+  - nodejs=9.*
+  - numba
+  - numpy
+  - opencv=4.*
+  - pandas
+  - pydotplus
+  - graphviz
+  - python-graphviz
+  - records
+  - requests
+  - scikit-image
+  - scikit-learn
+  - scipy
+  - seaborn
+  - statsmodels
+  - tqdm
+  - typing
+  - widgetsnbextension
+  - pip:
+    - cupy-cuda100
+    # - dowhy
+    - https://github.com/ryantam626/jupyterlab_black/archive/master.zip
+    - japanize_matplotlib
+    - jupyter-tensorboard
+    - jupyterlab_code_formatter
+    - kaggle-cli
+    - optuna
+    - plotly
+    - pyviz
+    - requests-html
+    - tensorflow-datasets
+    - tensorflow-gpu==2.*
+
+prefix: /opt/conda/envs/python36
+
