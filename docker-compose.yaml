@@ -1,7 +1,7 @@
 version:  '3'
 services:
   datascience-notebook:
-    image:    jupyter/datascience-notebook
+    image:    pydaa/python-data-science
     volumes:
       - ${HOME}:/home
       - ${LOCAL_DATASETS}:/home/data
@@ -9,7 +9,7 @@ services:
       - ${LOCAL_SSL_CERTS}:/etc/ssl/notebook
     ports:
       - ${PORT}:8888
-    container_name:   jupyter_notebook
+    container_name: python-data-science
     command: "jupyter lab"
       # --NotebookApp.password=${ACCESS_TOKEN}"
     links:
@@ -24,7 +24,7 @@ services:
         always
     environment:
         POSTGRES_USER:
-            pythonist
+            pythonista
         POSTGRES_PASSWORD:
             password
         POSTGRES_DB:

@@ -35,7 +35,6 @@ dependencies:
   - widgetsnbextension
   - pip:
     - cupy-cuda100
-    - git+https://github.com/ryantam626/jupyterlab_black/archive/master.zip
     # - dowhy
     - japanize_matplotlib
     - jupyter-tensorboard
