@@ -16,11 +16,6 @@ ENV DEBCONF_NOWARNINGS yes
 
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade \
  && apt-get install -yq --no-install-recommends \
-    # curl \
-    # fonts-liberation \
-    # gcc \
-    # gnupg2 \
-    # locales \
     bzip2 \
     ca-certificates \
     curl \
@@ -39,71 +34,8 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade \
  && rm -rf /var/lib/apt/lists/* \
  && apt-get clean
 
-# RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-certificates && \
-#     curl -fsSL https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub | apt-key add - && \
-# #     echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list && \
-# #     echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list && \
-# #     apt-get purge --autoremove -y curl && \
-# #     rm -rf /var/lib/apt/lists/*
-# #
-# # ENV CUDA_VERSION 10.1.105
-# # ENV CUDA_PKG_VERSION 10-1=$CUDA_VERSION-1
-# # ENV CUDNN_VERSION 7.5.0.56
-# # LABEL com.nvidia.cudnn.version="${CUDNN_VERSION}"
-# #
-#
-# # For libraries in the cuda-compat-* package: https://docs.nvidia.com/cuda/eula/index.html#attachment-a
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#         cuda-cudart-$CUDA_PKG_VERSION \
-#         cuda-compat-10-1 \
-#         libcudnn7=$CUDNN_VERSION-1+cuda10.1 \
-#         libcudnn7-dev=$CUDNN_VERSION-1+cuda10.1 && \
-#     apt-mark hold libcudnn7 && \
-#     ln -s cuda-10.1 /usr/local/cuda && \
-#     rm -rf /var/lib/apt/lists/*
-#
-# # Required for nvidia-docker v1
-# RUN echo "/usr/local/nvidia/lib" >> /etc/ld.so.conf.d/nvidia.conf && \
-#     echo "/usr/local/nvidia/lib64" >> /etc/ld.so.conf.d/nvidia.conf && \
-#     echo -e "\n## CUDA and cuDNN paths" >> ~/.bashrc && \
-#     echo 'export PATH=/usr/local/cuda-10.1/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}' >> ~/.bashrc && \
-#     echo 'export LD_LIBRARY_PATH=/usr/local/nvidia/lib:/usr/local/nvidia/lib64:${LD_LIBRARY_PATH}' >> ~/.bashrc
-
-# ENV PATH /usr/local/nvidia/bin:/usr/local/cuda/bin:${PATH}
-# ENV LD_LIBRARY_PATH /usr/local/nvidia/lib:/usr/local/nvidia/lib64
-
-# RUN curl -sL https://deb.nodesource.com/setup_9.x | bash - \
-# # echo 'deb https://deb.nodesource.com/node_9.x stretch main' > /etc/apt/sources.list.d/nodesource.list \
-# # && curl -sL https://deb.nodesource.com/setup_9.x | bash - \
-# RUN apt-get update -qq \
-#  && apt-get install -yq --no-install-recommends \
-#  && apt-get install -yq nodejs \
-#  && rm -rf /var/lib/apt/lists/* \
-#  && apt-get clean
-#
-# RUN apt-get update -qq \
-# && apt-get install -yq --no-install-recommends \
-#    # opencv
-#      libjpeg-dev \
-#      libpng-dev \
-#      libtiff-dev \
-#      libavcodec-dev \
-#      libavformat-dev \
-#      libswscale-dev \
-#      libv4l-dev \
-#      libxvidcore-dev \
-#      libx264-dev \
-#    # graphviz
-#      graphviz \
-#      libgraphviz-dev \
-#      graphviz-dev \
-#      pkg-config \
-#    && rm -rf /var/lib/apt/lists/* \
-#  && apt-get clean
-
 ENV MINICONDA_VERSION=4.5.12 \
     CONDA_VERSION=4.6.7
-
 
 # RUN bash -c "curl https://conda.ml | bash"
 RUN cd /tmp && \
@@ -128,15 +60,7 @@ RUN TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o
     rm tini.deb && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
-# " 
-
-# RUN conda install --quiet --yes 'tini=0.18.0' && \
-    # conda list tini | grep tini | tr -s ' ' | cut -d ' ' -f 1,2 >> $CONDA_DIR/conda-meta/pinned && \
-    # conda clean -tipsy
-
-# ENV TINI_VERSION v0.16.1
-# ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
-# RUN chmod +x /usr/bin/tini
+# "
 
 RUN mkdir -p /root/.jupyter \
   && echo "c.NotebookApp.allow_root = True" >> /root/.jupyter/jupyter_notebook_config.py \
@@ -152,12 +76,10 @@ VOLUME /home/data
 ENV PATH /opt/conda/envs/python36/bin:$PATH
 
 RUN conda env create -f /tmp/environment.yaml && \
-    # conda update --quiet --yes -n python36 conda && \
     echo "source activate python36 " >> ~/.bashrc && \
     npm cache clean --force
 
 # SHELL ["/bin/bash", "-c"]
-
 # graphviz
 # RUN /bin/bash -c "pip install pygraphviz --install-option='--include-path=/usr/include/graphviz' --install-option='--library-path=/usr/lib/graphviz/'" 
 
@@ -170,6 +92,7 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build 
     jupyter labextension install @jupyterlab/vega3-extension --no-build && \
     jupyter labextension install @lckr/jupyterlab_variableinspector --no-build && \
     jupyter labextension install @ryantam626/jupyterlab_black --no-build && \
+    pip install https://github.com/ryantam626/jupyterlab_black/archive/master.zip && \
     jupyter labextension install bqplot --no-build && \
     jupyter labextension install jupyter-leaflet --no-build && \
     jupyter labextension install jupyter-matplotlib --no-build && \
@@ -187,7 +110,7 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build 
         jlpm cache clean && \
         npm cache clean --force && \
         rm -rf $HOME/.node-gyp && \
-        rm -rf $HOME/.local && \
+        rm -rf $HOME/.local
 
 EXPOSE 8888
 WORKDIR $HOME

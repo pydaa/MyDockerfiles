@@ -10,13 +10,13 @@ services:
     ports:
       - ${PORT}:8888
     container_name:   jupyter_notebook
-    command: "start-notebook.sh \
-      --NotebookApp.password=${ACCESS_TOKEN} \
-      --NotebookApp.certfile=/etc/ssl/notebook/jupyter.pem"
+    command: "jupyter lab"
+      # --NotebookApp.password=${ACCESS_TOKEN}"
     links:
         - db
     depends_on:
         - db
+    runtime: nvidia
   db:
     image:
         postgres

@@ -35,15 +35,15 @@ dependencies:
   - widgetsnbextension
   - pip:
     - cupy-cuda100
+    - git+https://github.com/ryantam626/jupyterlab_black/archive/master.zip
     # - dowhy
-    - https://github.com/ryantam626/jupyterlab_black/archive/master.zip
     - japanize_matplotlib
     - jupyter-tensorboard
     - jupyterlab_code_formatter
     - kaggle-cli
     - optuna
     - plotly
-    - pyviz
+    # - pyviz
     - requests-html
     - tensorflow-datasets
     - tensorflow-gpu==2.*
