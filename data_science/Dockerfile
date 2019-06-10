@@ -84,15 +84,17 @@ RUN conda env create -f /tmp/environment.yaml && \
 # RUN /bin/bash -c "pip install pygraphviz --install-option='--include-path=/usr/include/graphviz' --install-option='--library-path=/usr/lib/graphviz/'" 
 
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-    jupyter labextension install @jupyterlab/git --no-build && \
+    # jupyter labextension install @jupyterlab/git --no-build && \
+    # jupyter labextension install @ryantam626/jupyterlab_black --no-build && \
+    # jupyter labextension install jupyterlab-dash@0.1.0-alpha.2 --no-build && \
+    # pip install https://github.com/ryantam626/jupyterlab_black/archive/master.zip && \
     jupyter labextension install @jupyterlab/hub-extension --no-build && \
     jupyter labextension install @jupyterlab/latex --no-build && \
     jupyter labextension install @jupyterlab/plotly-extension --no-build && \
     jupyter labextension install @jupyterlab/toc --no-build && \
     jupyter labextension install @jupyterlab/vega3-extension --no-build && \
     jupyter labextension install @lckr/jupyterlab_variableinspector --no-build && \
-    jupyter labextension install @ryantam626/jupyterlab_black --no-build && \
-    pip install https://github.com/ryantam626/jupyterlab_black/archive/master.zip && \
+    jupyter labextension install @ryantam626/jupyterlab_code_formatter --no-build && \
     jupyter labextension install bqplot --no-build && \
     jupyter labextension install jupyter-leaflet --no-build && \
     jupyter labextension install jupyter-matplotlib --no-build && \
@@ -103,11 +105,11 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build 
     jupyter labextension install jupyterlab_tensorboard --no-build && \
     jupyter labextension install nbdime-jupyterlab --no-build && \
     jupyter labextension install plotlywidget --no-build && \
-    jupyter serverextension enable --py jupyterlab_black && \
-    jupyter serverextension enable --py jupyterlab_git && \
+    # jupyter serverextension enable --py jupyterlab_black && \
+    # jupyter serverextension enable --py jupyterlab_git && \
+    jupyter serverextension enable --py jupyterlab_code_formatter && \
     jupyter lab build && \
         jupyter lab clean && \
-        jlpm cache clean && \
         npm cache clean --force && \
         rm -rf $HOME/.node-gyp && \
         rm -rf $HOME/.local

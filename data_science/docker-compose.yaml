@@ -4,10 +4,9 @@ services:
     # image:    pydaa/python-data-science
     build: data_science
     volumes:
-      - ${HOME}:/home
-      - ${LOCAL_DATASETS}:/home/data
-      - ${LOCAL_notebook}:/home/notebook
-      - ${LOCAL_SSL_CERTS}:/etc/ssl/notebook
+      - ${HOME}/dev:/home
+      - ${HOME}/data:/home/data
+      - ${HOME}/notebook:/home/notebook
     ports:
       - ${PORT}:8888
     # container_name: python-data-science
