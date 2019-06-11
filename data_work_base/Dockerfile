@@ -1,4 +1,4 @@
-ARG BASE_CONTAINER=stable-20190610-slim
+ARG BASE_CONTAINER=debian@5ffb798d64089418ef4d3a261df5ad7cfa038eb2ef778db2b92604ac87228d99
 FROM $BASE_CONTAINER
 
 LABEL author="anosillus"
@@ -33,33 +33,20 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade \
  && rm -rf /var/lib/apt/lists/* \
  && apt-get clean
 
-
 ENV MINICONDA_VERSION=4.5.12 \
     CONDA_VERSION=4.6.7
 
-# RUN bash -c "curl https://conda.ml | bash"
 RUN mkdir -p /tmp && \
     wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -P /tmp && \
     wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P /tmp && \
-
     # It maight be not required.
     # chmod +x Miniconda-latest-Linux-x86_64.sh && \
-
     /bin/bash /tmp/Miniconda-latest-Linux-x86_64.sh -b -p $CONDA_DIR && \
     rm /tmp/Miniconda-latest-Linux-x86_64.sh && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-
     # conda-forge maight be better.
     $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
-
-    # I don't use this config.
-    # $CONDA_DIR/bin/conda config --system --set auto_update_conda false && \
-    # $CONDA_DIR/bin/conda config --system --set show_channel_urls true && \
-
-    # I automatically install latest conda.
-    # $CONDA_DIR/bin/conda install --quiet --yes conda="${CONDA_VERSION%.*}.*" && \ 
-
     $CONDA_DIR/bin/conda install --quiet --yes && \
     $CONDA_DIR/bin/conda update conda --quiet --yes && \
     conda clean -tipsy && \
@@ -67,13 +54,7 @@ RUN mkdir -p /tmp && \
     # ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     # echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
 
-RUN TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
-    curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
-    dpkg -i tini.deb && \
-    rm tini.deb && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean
-# "
+RUN [ "/bin/bash", "-c", "conda install tini -y"]
 
 RUN mkdir -p /root/.jupyter \
   && echo "c.NotebookApp.allow_root = True" >> /root/.jupyter/jupyter_notebook_config.py \
@@ -131,4 +112,5 @@ EXPOSE 8888
 WORKDIR $HOME
 
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
+# ENTRYPOINT ["tini", "-g", "--"]
 # CMD ["/bin/bash/", "cd", "$HOME", ";", "jupyter" ,"lab", "--no-browser"]
