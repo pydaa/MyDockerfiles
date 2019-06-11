@@ -38,8 +38,9 @@ ENV MINICONDA_VERSION=4.5.12 \
     CONDA_VERSION=4.6.7
 
 # RUN bash -c "curl https://conda.ml | bash"
-RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -P /tmp && \
-    wget --quiet https://raw.githubusercontent.com/pydaa/CondaEnvironment/master/environment.yaml -P /tmp && \
+RUN mkdir -p /tmp && \
+    wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -P /tmp && \
+    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P /tmp && \
 
     # It maight be not required.
     # chmod +x Miniconda-latest-Linux-x86_64.sh && \
