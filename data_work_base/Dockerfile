@@ -1,14 +1,13 @@
-ARG BASE_CONTAINER=debian:stretch-20190326-slim@sha256:bade11bf1835c9f09b011b5b1cf9f7428328416410b238d2f937966ea820be74
+ARG BASE_CONTAINER=stable-20190610-slim
 FROM $BASE_CONTAINER
 
-LABEL author="tida"
+LABEL author="anosillus"
 
 ENV CONDA_DIR=/opt/conda \
     SHELL=/bin/bash
 ENV PATH=$CONDA_DIR/bin:$PATH \
     HOME=/home
 
-COPY environment.yaml /tmp/environment.yaml
 USER root
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -34,20 +33,33 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade \
  && rm -rf /var/lib/apt/lists/* \
  && apt-get clean
 
+
 ENV MINICONDA_VERSION=4.5.12 \
     CONDA_VERSION=4.6.7
 
 # RUN bash -c "curl https://conda.ml | bash"
-RUN cd /tmp && \
-    wget --quiet https://repo.continuum.io/miniconda/Miniconda3-${MINICONDA_VERSION}-Linux-x86_64.sh -O /tmp/miniconda.sh && \
-    /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
-    rm /tmp/miniconda.sh && \
+RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -P /tmp && \
+    wget --quiet https://raw.githubusercontent.com/pydaa/CondaEnvironment/master/environment.yaml -P /tmp && \
+
+    # It maight be not required.
+    # chmod +x Miniconda-latest-Linux-x86_64.sh && \
+
+    /bin/bash /tmp/Miniconda-latest-Linux-x86_64.sh -b -p $CONDA_DIR && \
+    rm /tmp/Miniconda-latest-Linux-x86_64.sh && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+
+    # conda-forge maight be better.
     $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
+
+    # I don't use this config.
     # $CONDA_DIR/bin/conda config --system --set auto_update_conda false && \
     # $CONDA_DIR/bin/conda config --system --set show_channel_urls true && \
-    $CONDA_DIR/bin/conda install --quiet --yes conda="${CONDA_VERSION%.*}.*" && \
+
+    # I automatically install latest conda.
+    # $CONDA_DIR/bin/conda install --quiet --yes conda="${CONDA_VERSION%.*}.*" && \ 
+
+    $CONDA_DIR/bin/conda install --quiet --yes && \
     $CONDA_DIR/bin/conda update conda --quiet --yes && \
     conda clean -tipsy && \
     rm -rf /home/.cache/yarn
@@ -79,12 +91,12 @@ RUN conda env create -f /tmp/environment.yaml && \
     echo "source activate python36 " >> ~/.bashrc && \
     npm cache clean --force
 
-# SHELL ["/bin/bash", "-c"]
 # graphviz
 # RUN /bin/bash -c "pip install pygraphviz --install-option='--include-path=/usr/include/graphviz' --install-option='--library-path=/usr/lib/graphviz/'" 
-
+#
+SHELL ["/bin/bash", "-c"]
 RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-    # jupyter labextension install @jupyterlab/git --no-build && \
+    jupyter labextension install @jupyterlab/git --no-build && \
     # jupyter labextension install @ryantam626/jupyterlab_black --no-build && \
     # jupyter labextension install jupyterlab-dash@0.1.0-alpha.2 --no-build && \
     # pip install https://github.com/ryantam626/jupyterlab_black/archive/master.zip && \
@@ -106,7 +118,7 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build 
     jupyter labextension install nbdime-jupyterlab --no-build && \
     jupyter labextension install plotlywidget --no-build && \
     # jupyter serverextension enable --py jupyterlab_black && \
-    # jupyter serverextension enable --py jupyterlab_git && \
+    jupyter serverextension enable --py jupyterlab_git && \
     jupyter serverextension enable --py jupyterlab_code_formatter && \
     jupyter lab build && \
         jupyter lab clean && \
