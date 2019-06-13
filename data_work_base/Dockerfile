@@ -13,25 +13,20 @@ USER root
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS yes
 
-RUN apt-get update --fix-missing && apt-get -yq dist-upgrade \
- && apt-get install -yq --no-install-recommends \
-    bzip2 \
-    ca-certificates \
-    curl \
-    dpkg \
-    git \
-    grep \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender1 \
-    mercurial \
-    sed \
-    subversion \
-    sudo \
-    wget \
- && rm -rf /var/lib/apt/lists/* \
- && apt-get clean
+RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
+    apt-get install -y \
+      bzip2 \ 
+      ca-certificates \
+      git \
+      libglib2.0-0\
+      libsm6 \
+      libxext6 \
+      libxrender1 \
+      mercurial \
+      subversion 
+      wget \
+&& rm -rf /var/lib/apt/lists/* \
+&& apt-get clean
 
 ENV MINICONDA_VERSION=4.5.12 \
     CONDA_VERSION=4.6.7
@@ -53,7 +48,19 @@ RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86
     # ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     # echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
 
-RUN [ "/bin/bash", "-c", "conda install tini -y"]
+RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
+    apt-get install -y \ 
+      curl \
+      grep \
+      sed \
+      dpkg && \
+    TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
+    curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
+    dpkg -i tini.deb && \
+    rm tini.deb && \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+# "
 
 RUN mkdir -p /root/.jupyter \
   && echo "c.NotebookApp.allow_root = True" >> /root/.jupyter/jupyter_notebook_config.py \
