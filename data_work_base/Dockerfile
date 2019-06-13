@@ -15,7 +15,7 @@ ENV DEBCONF_NOWARNINGS yes
 
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get install -y \
-      bzip2 \ 
+      bzip2 \
       ca-certificates \
       git \
       libglib2.0-0\
@@ -23,22 +23,21 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
       libxext6 \
       libxrender1 \
       mercurial \
-      subversion 
+      subversion \
       wget \
-&& rm -rf /var/lib/apt/lists/* \
-&& apt-get clean
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
 
 ENV MINICONDA_VERSION=4.5.12 \
     CONDA_VERSION=4.6.7
 
-RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -P /tmp/ && \
-    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P /tmp/ && \
-    # It maight be not required.
-    # chmod +x Miniconda-latest-Linux-x86_64.sh && \
-    /bin/bash /tmp/Miniconda-latest-Linux-x86_64.sh -b -p $CONDA_DIR && \
-    rm /tmp/Miniconda-latest-Linux-x86_64.sh && \
+RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
+    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/environment.yaml && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+
     # conda-forge maight be better.
     $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
     $CONDA_DIR/bin/conda install --quiet --yes && \
@@ -49,17 +48,17 @@ RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86
     # echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
 
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
-    apt-get install -y \ 
+    apt-get install -y \
       curl \
       grep \
       sed \
-      dpkg && \
-    TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
+      dpkg \
+    && TINI_VERSION=`curl https://github.com/krallin/tini/releases/latest | grep -o "/v.*\"" | sed 's:^..\(.*\).$:\1:'` && \
     curl -L "https://github.com/krallin/tini/releases/download/v${TINI_VERSION}/tini_${TINI_VERSION}.deb" > tini.deb && \
     dpkg -i tini.deb && \
     rm tini.deb && \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 # "
 
 RUN mkdir -p /root/.jupyter \
@@ -74,9 +73,9 @@ VOLUME /home/notebook
 VOLUME /home/data
 
 
-RUN conda env create -f /tmp/environment.yaml && \
-    echo "source activate python36 " >> ~/.bashrc && \
-    npm cache clean --force
+RUN conda env create -f ~/environment.yaml && \
+    echo "conda activate python36" >> ~/.bashrc && \
+    npm cache clean --force && \
 
 ENV PATH /opt/conda/envs/python36/bin:$PATH
 
@@ -114,6 +113,14 @@ RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build 
         npm cache clean --force && \
         rm -rf $HOME/.node-gyp && \
         rm -rf $HOME/.local
+
+RUN touch ~/.config/fish/fish.config && \
+    echo "source opt/conda/etc/fish/conf.d/conda.fish" >> ~/.config/fish/fish.config && \
+    echo "conda activate python36" >> ~/.config/fish/fish.config && \
+    apt-get update --fix-missing && \
+    apt-get install -y fish && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
 EXPOSE 8888
 WORKDIR $HOME
