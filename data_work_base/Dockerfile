@@ -32,20 +32,15 @@ ENV MINICONDA_VERSION=4.5.12 \
     CONDA_VERSION=4.6.7
 
 RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/environment.yaml && \
-    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
-    rm ~/miniconda.sh && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/environment.yaml
+RUN /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh
+RUN ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-
     # conda-forge maight be better.
-    $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
-    $CONDA_DIR/bin/conda install --quiet --yes && \
-    $CONDA_DIR/bin/conda update conda --quiet --yes && \
-    conda clean -tipsy && \
-    rm -rf /home/.cache/yarn
-    # ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    # echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
+RUN /opt/conda/bin/conda config --system --prepend channels conda-forge
+RUN conda clean -tipsy
+RUN rm -rf /home/.cache/yarn
 
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get install -y \
