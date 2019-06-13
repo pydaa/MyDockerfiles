@@ -36,9 +36,8 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade \
 ENV MINICONDA_VERSION=4.5.12 \
     CONDA_VERSION=4.6.7
 
-RUN mkdir -p /tmp && \
-    wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -P /tmp && \
-    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P /tmp && \
+RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -P /tmp/ && \
+    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P /tmp/ && \
     # It maight be not required.
     # chmod +x Miniconda-latest-Linux-x86_64.sh && \
     /bin/bash /tmp/Miniconda-latest-Linux-x86_64.sh -b -p $CONDA_DIR && \
@@ -67,11 +66,12 @@ RUN mkdir /home/notebook && \
 VOLUME /home/notebook
 VOLUME /home/data
 
-ENV PATH /opt/conda/envs/python36/bin:$PATH
 
 RUN conda env create -f /tmp/environment.yaml && \
     echo "source activate python36 " >> ~/.bashrc && \
     npm cache clean --force
+
+ENV PATH /opt/conda/envs/python36/bin:$PATH
 
 # graphviz
 # RUN /bin/bash -c "pip install pygraphviz --install-option='--include-path=/usr/include/graphviz' --install-option='--library-path=/usr/lib/graphviz/'" 
