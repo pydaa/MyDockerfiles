@@ -119,5 +119,4 @@ EXPOSE 8888
 WORKDIR $HOME
 
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
-# ENTRYPOINT ["tini", "-g", "--"]
 # CMD ["/bin/bash/", "cd", "$HOME", ";", "jupyter" ,"lab", "--no-browser"]
