@@ -36,7 +36,7 @@ RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86
 RUN /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh
 RUN ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc
     # conda-forge maight be better.
 RUN /opt/conda/bin/conda config --system --prepend channels conda-forge
 RUN conda clean -tipsy
