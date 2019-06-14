@@ -68,7 +68,7 @@ VOLUME /home/notebook
 VOLUME /home/data
 
 
-RUN conda env create -f ~/environment.yaml && \
+RUN /opt/conda/bin/conda env create -f ~/environment.yaml && \
     echo "conda activate python36" >> ~/.bashrc && \
     npm cache clean --force
 
