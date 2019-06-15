@@ -32,7 +32,6 @@ ENV MINICONDA_VERSION=4.5.12 \
     CONDA_VERSION=4.6.7
 
 RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/environment.yaml && \
     /bin/bash ~/miniconda.sh -b -p /opt/conda && \
     rm ~/miniconda.sh && \
     ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
@@ -41,6 +40,12 @@ RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86
     /opt/conda/bin/conda config --system --prepend channels conda-forge && \
     conda clean -tipsy && \
     rm -rf /home/.cache/yarn
+
+ RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/environment.yaml && \
+    /opt/conda/bin/conda env create -f ~/environment.yaml && \
+    echo "conda activate python36" >> ~/.bashrc && \
+    npm cache clean --force
+
 
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get install -y \
@@ -66,11 +71,6 @@ RUN mkdir /home/notebook && \
 
 VOLUME /home/notebook
 VOLUME /home/data
-
-
-RUN /opt/conda/bin/conda env create -f ~/environment.yaml && \
-    echo "conda activate python36" >> ~/.bashrc && \
-    npm cache clean --force
 
 ENV PATH /opt/conda/envs/python36/bin:$PATH
 
