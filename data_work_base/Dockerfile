@@ -1,11 +1,6 @@
 ARG BASE_CONTAINER=debian@sha256:9490c476443a3869e39c2897fa66c91daf5dcbbfca53c976dac7bbdc45775b28
 FROM $BASE_CONTAINER
-
 LABEL author="anosillus"
-
-ARG NB_USER="mad-scientist"
-ARG NB_UID="1000"
-ARG NB_GID="100"
 
 USER root
 
@@ -31,6 +26,10 @@ RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
 
 ADD fix-permissions /usr/local/bin/fix-permissions
+
+ARG NB_USER="mad-scientist"
+ARG NB_UID="1000"
+ARG NB_GID="100"
 
 ENV CONDA_DIR=/opt/conda \
     SHELL=/bin/bash \
@@ -85,8 +84,7 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     fix-permissions $HOME
 # "
 
- RUN set -x && \
-    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/ && \
+RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/ && \
     conda env create -f ~/environment.yaml && \
     echo "conda activate python36" >> ~/.bashrc && \
     conda clean --all -f -y && \
@@ -115,8 +113,7 @@ ENV PATH /opt/conda/envs/python36/bin:$PATH
 
 SHELL ["/bin/bash", "-c"]
 
-RUN set -x && \
-    wget https://github.com/anosillus/CondaEnvironment/blob/master/jupyter_lab_ext.sh -P ~/ && \
+RUN wget https://github.com/anosillus/CondaEnvironment/blob/master/jupyter_lab_ext.sh -P ~/ && \
     ~/jupyter_lab_ext.sh && \
     rm -rf /opt/conda/share/jupyter/lab/staging && \
 
