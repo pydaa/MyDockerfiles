@@ -43,7 +43,8 @@ RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86
     conda clean -tipsy && \
     rm -rf /home/.cache/yarn
 
- RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/environment.yaml && \
+ RUN set -x && \
+    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/environment.yaml && \
     /opt/conda/bin/conda env create -f ~/environment.yaml && \
     echo "conda activate python36" >> ~/.bashrc && \
     npm cache clean --force
