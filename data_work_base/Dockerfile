@@ -94,6 +94,5 @@ RUN apt-get update --fix-missing && \
     echo "conda activate python36" >> ~/.config/fish/fish.config && \
 
 EXPOSE 8888
-
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
 # CMD ["/bin/bash/", "cd", "$HOME", ";", "jupyter" ,"lab", "--no-browser"]
