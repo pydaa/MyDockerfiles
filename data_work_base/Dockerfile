@@ -44,7 +44,7 @@ RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86
     rm -rf /home/.cache/yarn
 
  RUN set -x && \
-    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/environment.yaml && \
+    wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/ && \
     /opt/conda/bin/conda env create -f ~/environment.yaml && \
     echo "conda activate python36" >> ~/.bashrc && \
     npm cache clean --force
@@ -82,7 +82,7 @@ ENV PATH /opt/conda/envs/python36/bin:$PATH
 SHELL ["/bin/bash", "-c"]
 
 RUN set -x && \
-    wget https://github.com/anosillus/CondaEnvironment/blob/master/jupyter_lab_ext.sh -P ~/jupyter_lab_ext.sh && \
+    wget https://github.com/anosillus/CondaEnvironment/blob/master/jupyter_lab_ext.sh -P ~/ && \
     ~/jupyter_lab_ext.sh
 
 RUN apt-get update --fix-missing && \
