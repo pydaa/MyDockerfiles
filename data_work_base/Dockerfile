@@ -13,6 +13,8 @@ USER root
 ENV DEBIAN_FRONTEND noninteractive
 ENV DEBCONF_NOWARNINGS yes
 
+WORKDIR $HOME
+
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get install -y \
       bzip2 \
@@ -46,7 +48,6 @@ RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86
     echo "conda activate python36" >> ~/.bashrc && \
     npm cache clean --force
 
-
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get install -y \
       curl \
@@ -61,10 +62,13 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get clean
 # "
 
-RUN mkdir -p /root/.jupyter \
-  && echo "c.NotebookApp.allow_root = True" >> /root/.jupyter/jupyter_notebook_config.py \
-  && echo "c.NotebookApp.ip = '0.0.0.0'" >> /root/.jupyter/jupyter_notebook_config.py \
-  && echo "c.NotebookApp.token = ''" >> /root/.jupyter/jupyter_notebook_config.py
+RUN mkdir -p ~/.jupyter && \
+    {echo "c.NotebookApp.allow_root = True"; \
+     echo "c.NotebookApp.ip = '0.0.0.0'"; \
+     echo "c.NotebookApp.token = ''"; \
+     echo "c.JupyterLabTemplates.template_dirs = ['list', 'of', 'template', 'directories']"; \
+     echo "c.JupyterLabTemplates.include_default = True"; \
+    } | tee ~/.jupyter/jupyter_notebook_config.py
 
 RUN mkdir /home/notebook && \
     mkdir /home/data
@@ -74,51 +78,21 @@ VOLUME /home/data
 
 ENV PATH /opt/conda/envs/python36/bin:$PATH
 
-# graphviz
-# RUN /bin/bash -c "pip install pygraphviz --install-option='--include-path=/usr/include/graphviz' --install-option='--library-path=/usr/lib/graphviz/'" 
-#
 SHELL ["/bin/bash", "-c"]
-RUN jupyter labextension install @jupyter-widgets/jupyterlab-manager --no-build && \
-    jupyter labextension install @jupyterlab/git --no-build && \
-    # jupyter labextension install @ryantam626/jupyterlab_black --no-build && \
-    # jupyter labextension install jupyterlab-dash@0.1.0-alpha.2 --no-build && \
-    # pip install https://github.com/ryantam626/jupyterlab_black/archive/master.zip && \
-    jupyter labextension install @jupyterlab/hub-extension --no-build && \
-    jupyter labextension install @jupyterlab/latex --no-build && \
-    jupyter labextension install @jupyterlab/plotly-extension --no-build && \
-    jupyter labextension install @jupyterlab/toc --no-build && \
-    jupyter labextension install @jupyterlab/vega3-extension --no-build && \
-    jupyter labextension install @lckr/jupyterlab_variableinspector --no-build && \
-    jupyter labextension install @ryantam626/jupyterlab_code_formatter --no-build && \
-    jupyter labextension install bqplot --no-build && \
-    jupyter labextension install jupyter-leaflet --no-build && \
-    jupyter labextension install jupyter-matplotlib --no-build && \
-    jupyter labextension install jupyterlab-chart-editor --no-build && \
-    jupyter labextension install jupyterlab-drawio --no-build && \
-    jupyter labextension install jupyterlab-kernelspy --no-build && \
-    jupyter labextension install jupyterlab_bokeh --no-build && \
-    jupyter labextension install jupyterlab_tensorboard --no-build && \
-    jupyter labextension install nbdime-jupyterlab --no-build && \
-    jupyter labextension install plotlywidget --no-build && \
-    # jupyter serverextension enable --py jupyterlab_black && \
-    jupyter serverextension enable --py jupyterlab_git && \
-    jupyter serverextension enable --py jupyterlab_code_formatter && \
-    jupyter lab build && \
-        jupyter lab clean && \
-        npm cache clean --force && \
-        rm -rf $HOME/.node-gyp && \
-        rm -rf $HOME/.local
 
-RUN touch ~/.config/fish/fish.config && \
+RUN set -x && \
+    wget https://github.com/anosillus/CondaEnvironment/blob/master/jupyter_lab_ext.sh -P ~/jupyter_lab_ext.sh && \
+    ~/jupyter_lab_ext.sh
+
+RUN apt-get update --fix-missing && \
+    apt-get install -y fish texlive-xetex && \
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean && \
+    touch ~/.config/fish/fish.config && \
     echo "source opt/conda/etc/fish/conf.d/conda.fish" >> ~/.config/fish/fish.config && \
     echo "conda activate python36" >> ~/.config/fish/fish.config && \
-    apt-get update --fix-missing && \
-    apt-get install -y fish && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean
 
 EXPOSE 8888
-WORKDIR $HOME
 
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
 # CMD ["/bin/bash/", "cd", "$HOME", ";", "jupyter" ,"lab", "--no-browser"]
