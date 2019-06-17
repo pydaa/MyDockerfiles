@@ -9,7 +9,6 @@ ARG NB_GID="100"
 
 USER root
 
-
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get install -y \
       bzip2 \
@@ -31,6 +30,8 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
 
+ADD fix-permissions /usr/local/bin/fix-permissions
+
 ENV CONDA_DIR=/opt/conda \
     SHELL=/bin/bash \
     NB_USER=$NB_USER \
@@ -42,7 +43,6 @@ ENV CONDA_DIR=/opt/conda \
 ENV PATH=$CONDA_DIR/bin:$PATH \
     HOME=/home/$NB_USER
 
-ADD fix-permissions /usr/local/bin/fix-permissions
 
 WORKDIR $HOME
 USER $NB_UID
