@@ -84,7 +84,7 @@ ENV PATH $CONDA_DIR/envs/python36/bin:$PATH
 
 SHELL ["/bin/bash", "-c"]
 
-RUN wget https://github.com/anosillus/CondaEnvironment/blob/master/jupyter_lab_ext.sh -P ~/ && \
+RUN wget https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/jupyter_lab_ext.sh -P ~/ && \
     chmod 700 ~/jupyter_lab_ext.sh && \
     ~/jupyter_lab_ext.sh && \
     rm -rf /opt/conda/share/jupyter/lab/staging
