@@ -66,13 +66,13 @@ RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/ma
     rm -rf ~/.cache/yarn && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging
 
-RUN mkdir -p $HOME/.jupyter && { \
+RUN mkdir -p ~/.jupyter && { \
     echo "c.NotebookApp.allow_root = True"; \
     echo "c.NotebookApp.ip = '0.0.0.0'"; \
     echo "c.NotebookApp.token = ''"; \
     echo "c.JupyterLabTemplates.template_dirs = ['list', 'of', 'template', 'directories']"; \
     echo "c.JupyterLabTemplates.include_default = True"; \
-    } | tee $HOME/.jupyter/jupyter_notebook_config.py
+    } | tee ~/.jupyter/jupyter_notebook_config.py
 
 RUN mkdir $HOME/notebook && \
     mkdir $HOME/data
