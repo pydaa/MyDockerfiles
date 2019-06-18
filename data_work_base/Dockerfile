@@ -34,14 +34,14 @@ ENV PATH=$CONDA_DIR/bin:$PATH \
     HOME=/home
 
 RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O SHOME/miniconda.sh && \
-    /bin/bash $HOME/miniconda.sh -f -b -p $CONDA_DIR && \
-    rm $HOME/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -f -b -p $CONDA_DIR && \
+    rm ~/miniconda.sh && \
     ln -s $CONDA_DIR/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
     $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
     $CONDA_DIR/bin/conda update --all --quiet --yes && \
     conda clean -tipsy && \
-    rm -rf /home/.cache/yarn
+    rm -rf ~/.cache/yarn
 
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get install -y \
@@ -57,13 +57,13 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get clean
 # "
 
-RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P $HOME && \
+RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/ && \
     conda env create -f ~/environment.yaml && \
     echo "conda activate python36" >> ~/.bashrc && \
     conda clean --all -f -y && \
     # jupyter labextension install @jupyterlab/hub-extension@^0.12.0 && \
     # npm cache clean --force && \
-    rm -rf $HOME/.cache/yarn && \
+    rm -rf ~/.cache/yarn && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging
 
 RUN mkdir -p $HOME/.jupyter && \
