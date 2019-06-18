@@ -33,9 +33,9 @@ ENV CONDA_DIR=/opt/conda \
 ENV PATH=$CONDA_DIR/bin:$PATH \
     HOME=/home
 
-RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
-    /bin/bash ~/miniconda.sh -f -b -p $CONDA_DIR && \
-    rm ~/miniconda.sh && \
+RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O SHOME/miniconda.sh && \
+    /bin/bash $HOME/miniconda.sh -f -b -p $CONDA_DIR && \
+    rm $HOME/miniconda.sh && \
     ln -s $CONDA_DIR/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
     echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
     $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
@@ -57,30 +57,30 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get clean
 # "
 
-RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/ && \
+RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P $HOME && \
     conda env create -f ~/environment.yaml && \
     echo "conda activate python36" >> ~/.bashrc && \
     conda clean --all -f -y && \
-    jupyter labextension install @jupyterlab/hub-extension@^0.12.0 && \
+    # jupyter labextension install @jupyterlab/hub-extension@^0.12.0 && \
     # npm cache clean --force && \
     rm -rf $HOME/.cache/yarn && \
     rm -rf $CONDA_DIR/share/jupyter/lab/staging
 
-RUN mkdir -p ~/.jupyter && \
+RUN mkdir -p $HOME/.jupyter && \
     {echo "c.NotebookApp.allow_root = True"; \
      echo "c.NotebookApp.ip = '0.0.0.0'"; \
      echo "c.NotebookApp.token = ''"; \
      echo "c.JupyterLabTemplates.template_dirs = ['list', 'of', 'template', 'directories']"; \
      echo "c.JupyterLabTemplates.include_default = True"; \
-    } | tee ~/.jupyter/jupyter_notebook_config.py
+    } | tee $HOME/.jupyter/jupyter_notebook_config.py
 
 RUN mkdir $HOME/notebook && \
     mkdir $HOME/data
 
-VOLUME /home/notebook
-VOLUME /home/data
+VOLUME $HOME/notebook
+VOLUME $HOME/data
 
-ENV PATH /opt/conda/envs/python36/bin:$PATH
+ENV PATH $CONDA_DIR/envs/python36/bin:$PATH
 
 SHELL ["/bin/bash", "-c"]
 
