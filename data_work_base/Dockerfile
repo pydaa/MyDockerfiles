@@ -25,36 +25,13 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
 RUN echo "en_US.UTF-8 UTF-8" > /etc/locale.gen && \
     locale-gen
 
-ADD fix-permissions /usr/local/bin/fix-permissions
-
-ARG NB_USER="mad-scientist"
-ARG NB_UID="1000"
-ARG NB_GID="100"
-
 ENV CONDA_DIR=/opt/conda \
     SHELL=/bin/bash \
-    NB_USER=$NB_USER \
-    NB_UID=$NB_UID \
-    NB_GID=$NB_GID \
     LC_ALL=en_US.UTF-8 \
     LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
 ENV PATH=$CONDA_DIR/bin:$PATH \
-    HOME=/home/$NB_USER
-
-
-WORKDIR $HOME
-USER $NB_UID
-
-RUN echo "auth requisite pam_deny.so" >> /etc/pam.d/su && \
-    sed -i.bak -e 's/^%admin/#%admin/' /etc/sudoers && \
-    sed -i.bak -e 's/^%sudo/#%sudo/' /etc/sudoers && \
-    useradd -m -s /bin/bash -N -u $NB_UID $NB_USER && \
-    mkdir -p $CONDA_DIR && \
-    chown $NB_USER:$NB_GID $CONDA_DIR && \
-    chmod g+w /etc/passwd && \
-    fix-permissions $HOME && \
-    fix-permissions "$(dirname $CONDA_DIR)"
+    HOME=/home
 
 RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda.sh && \
     /bin/bash ~/miniconda.sh -f -b -p $CONDA_DIR && \
@@ -64,9 +41,7 @@ RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86
     $CONDA_DIR/bin/conda config --system --prepend channels conda-forge && \
     $CONDA_DIR/bin/conda update --all --quiet --yes && \
     conda clean -tipsy && \
-    rm -rf /home/.cache/yarn && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions $HOME
+    rm -rf /home/.cache/yarn
 
 RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     apt-get install -y \
@@ -79,9 +54,7 @@ RUN apt-get update --fix-missing && apt-get -yq dist-upgrade && \
     dpkg -i tini.deb && \
     rm tini.deb && \
     rm -rf /var/lib/apt/lists/* && \
-    apt-get clean && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions $HOME
+    apt-get clean
 # "
 
 RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/environment.yaml -P ~/ && \
@@ -91,9 +64,7 @@ RUN wget --quiet https://raw.githubusercontent.com/anosillus/CondaEnvironment/ma
     jupyter labextension install @jupyterlab/hub-extension@^0.12.0 && \
     # npm cache clean --force && \
     rm -rf $HOME/.cache/yarn && \
-    rm -rf $CONDA_DIR/share/jupyter/lab/staging && \
-    fix-permissions $CONDA_DIR && \
-    fix-permissions $HOME
+    rm -rf $CONDA_DIR/share/jupyter/lab/staging
 
 RUN mkdir -p ~/.jupyter && \
     {echo "c.NotebookApp.allow_root = True"; \
@@ -115,7 +86,7 @@ SHELL ["/bin/bash", "-c"]
 
 RUN wget https://github.com/anosillus/CondaEnvironment/blob/master/jupyter_lab_ext.sh -P ~/ && \
     ~/jupyter_lab_ext.sh && \
-    rm -rf /opt/conda/share/jupyter/lab/staging && \
+    rm -rf /opt/conda/share/jupyter/lab/staging
 
 RUN apt-get update --fix-missing && \
     apt-get install -y fish texlive-xetex && \
@@ -123,7 +94,7 @@ RUN apt-get update --fix-missing && \
     apt-get clean && \
     touch ~/.config/fish/fish.config && \
     echo "source opt/conda/etc/fish/conf.d/conda.fish" >> ~/.config/fish/fish.config && \
-    echo "conda activate python36" >> ~/.config/fish/fish.config && \
+    echo "conda activate python36" >> ~/.config/fish/fish.config
 
 EXPOSE 8888
 ENTRYPOINT [ "/usr/bin/tini", "--" ]
