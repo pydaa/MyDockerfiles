@@ -93,6 +93,7 @@ RUN apt-get update --fix-missing && \
     apt-get install -y fish texlive-xetex && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
+    mkdir -p ~/.config/fish && \
     touch ~/.config/fish/fish.config && \
     echo "source opt/conda/etc/fish/conf.d/conda.fish" >> ~/.config/fish/fish.config && \
     echo "conda activate python36" >> ~/.config/fish/fish.config
