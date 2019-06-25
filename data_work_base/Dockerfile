@@ -90,7 +90,7 @@ RUN wget https://raw.githubusercontent.com/anosillus/CondaEnvironment/master/jup
     rm -rf /opt/conda/share/jupyter/lab/staging
 
 RUN apt-get update --fix-missing && \
-    apt-get install -y fish texlive-xetex fonts-ipafont fonts-ipaexfont && \
+    apt-get install -y fish texlive-xetex fonts-ipafont fonts-ipaexfont fonts-noto-cjk && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean && \
     mkdir -p ~/.config/fish && \
